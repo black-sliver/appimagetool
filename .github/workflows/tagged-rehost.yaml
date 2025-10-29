@@ -1,0 +1,42 @@
+name: tagged-rehost
+
+on:
+  push:
+    tags:
+      - 'r*'
+
+permissions:
+  id-token: 'write'
+  attestations: 'write'
+  contents: 'write'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v5.0.0
+    - uses: actions/setup-python@v6.0.0
+      with:
+        python-version: '3.14'
+    - run: |
+        COMMIT=$(python .github/download-and-verify.py --out out)
+        echo "COMMIT=$COMMIT" >> $GITHUB_ENV
+        sha256sum out/*
+    - name: Attest
+      uses: actions/attest-build-provenance@v3.0.0
+      with:
+        subject-path: |
+          out/*
+    - name: Create Release
+      uses: softprops/action-gh-release@975c1b265e11dd76618af1c374e7981f9a6ff44a
+      with:
+        draft: true
+        prerelease: false
+        name: 'appimagetool ${{ github.ref_name }}'
+        body: |
+          Rehosting ${{ env.COMMIT }}.
+          Check the [README](README.md) for details.
+        files: |
+          out/*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,4 +1,35 @@
-# appimagetool ![Downloads](https://img.shields.io/github/downloads/AppImage/appimagetool/total.svg) [![irc](https://img.shields.io/badge/IRC-%23AppImage%20on%20libera.chat-blue.svg)](https://web.libera.chat/#AppImage) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZT9CL8M5TJU72)
+# appimagetool rehost
+
+This repository is currently rehosting the releases from
+[AppImage/appimagetool](https://github.com/AppImage/appimagetool)
+to allow reproducible builds, provide some level of traceability and mitigate potential supply chain attacks.
+
+The original release artifacts on AppImage/appimagetool are not tagged, not signed and not attested.
+
+How a rehost release is created:
+* Check code changes.
+* Compare upstream action artifacts to release artifacts (currently done by hand).
+* Check that all upstream commits and no extra commits are merged here to retain the actual source.
+* The rehost action is started by pushing a tag, downloads the latest upstream release, uses actions/attest and creates
+  an [immutable release](https://github.blog/changelog/2025-08-26-releases-now-support-immutability-in-public-preview/).
+
+The attestation can be checked and reviewed using
+Actions -> Attestations,
+[gh attestation verify](https://cli.github.com/manual/gh_attestation_verify),
+[rekor search](https://search.sigstore.dev/) with the hash
+and/or `cosign verify-blob` with `--bundle`, `--certificate-identity`
+and `--certificate-oidc-issuer https://token.actions.githubusercontent.com`
+
+Note that this only attests when and how it was downloaded, not what went into it. The build itself is not fully
+reproducible.
+
+There is currently no signature to check. The appimagetool AppImage is not signed.
+
+Once validated, you can simply use the tag and check the SHA256 to verify the download.
+
+Original README follows:
+
+# appimagetool
 
 ## Usage
 
