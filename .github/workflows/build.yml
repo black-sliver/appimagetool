@@ -45,6 +45,7 @@ jobs:
             **/appimagetool*.AppImage*
 
   upload:
+    if: false  # always skip in rehost fork
     name: Create release and upload artifacts
     needs:
       - build
